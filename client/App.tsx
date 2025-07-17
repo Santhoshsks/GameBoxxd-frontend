@@ -10,6 +10,7 @@ import Games from "./pages/Games";
 import Lists from "./pages/Lists";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import CreateTierList from "./pages/CreateTierList";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
         <Route path="/" element={<Index />} />
         <Route path="/games" element={<Games />} />
         <Route path="/lists" element={<Lists />} />
+        <Route path="/create-tier-list" element={<CreateTierList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="*" element={<NotFound />} />
