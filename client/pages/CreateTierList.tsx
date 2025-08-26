@@ -55,7 +55,6 @@ export default function CreateTierList() {
 
   const { source, destination } = result;
 
-  // ✅ If dropped in the same place, do nothing
   if (
     source.droppableId === destination.droppableId &&
     source.index === destination.index
@@ -63,7 +62,6 @@ export default function CreateTierList() {
     return;
   }
 
-  // ✅ Dragging inside the same tier → just reorder
   if (source.droppableId === destination.droppableId && source.droppableId !== "pool") {
     setTiers((prevTiers) => {
       const newTiers = [...prevTiers];
@@ -77,7 +75,6 @@ export default function CreateTierList() {
     return;
   }
 
-  // ✅ Dragging inside the pool (just reorder pool)
   if (source.droppableId === "pool" && destination.droppableId === "pool") {
     setGamesPool((prev) => {
       const updated = Array.from(prev);
@@ -100,7 +97,7 @@ export default function CreateTierList() {
       const [moved] = newGamesPool.splice(source.index, 1);
 
       const newDestGames = Array.from(newTiers[destTierIndex].games);
-      // ✅ Prevent duplicate game
+      //  Prevent duplicate game
       if (!newDestGames.find((g) => g.id === moved.id)) {
         newDestGames.splice(destination.index, 0, moved);
       }
@@ -124,7 +121,7 @@ export default function CreateTierList() {
     const sourceGames = Array.from(newTiers[sourceTierIndex].games);
     const [moved] = sourceGames.splice(source.index, 1);
     const destGames = Array.from(newTiers[destTierIndex].games);
-    // ✅ Prevent duplicate game in destination tier
+    // Prevent duplicate game in destination tier
     if (!destGames.find((g) => g.id === moved.id)) {
       destGames.splice(destination.index, 0, moved);
     }

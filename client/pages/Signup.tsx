@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { account } from "@/appwriteClient";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -19,23 +25,62 @@ export default function Signup() {
     subscribeToNewsletter: false,
   });
 
+  const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+  const isValidUsername = (username: string) => usernameRegex.test(username);
+  const isValidEmail = (email: string) => emailRegex.test(email);
+  const isValidPassword = (password: string) => passwordRegex.test(password);
+  
+  const isUsernameValid = isValidUsername(formData.username);
+  const isEmailValid = isValidEmail(formData.email);
+  const isPasswordValid = isValidPassword(formData.password);
+  const isPasswordMatch = formData.password === formData.confirmPassword;
+
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup attempt:", formData);
-  };
+    setError(null);
+    setLoading(true);
 
-  const isPasswordMatch = formData.password === formData.confirmPassword;
+    try {
+      
+      await account.create(
+        "unique()",                
+        formData.email,
+        formData.password,
+        formData.username
+      );
+      
+      await account.createSession(formData.email, formData.password);
+      console.log("Logged");
+      navigate("/dashboard"); 
+    } catch (err: any) {
+      console.error("Signup error:", err);
+    if (err.code === 409) { 
+      setError("An account with this email already exists.");
+    } else if (err.code === 429) {
+      setError("Too many requests. Please wait a moment and try again.");
+    } else {
+      setError(err.message || "An error occurred. Please try again.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
   const canSubmit =
-    formData.username &&
-    formData.email &&
-    formData.password &&
+    isUsernameValid &&
+    isEmailValid &&
+    isPasswordValid &&
     isPasswordMatch &&
     formData.agreeToTerms;
+
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -67,6 +112,7 @@ export default function Signup() {
         {/* Signup form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            {/* Username */}
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <div className="relative">
@@ -76,15 +122,19 @@ export default function Signup() {
                   type="text"
                   placeholder="Choose a username"
                   value={formData.username}
-                  onChange={(e) =>
-                    handleInputChange("username", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("username", e.target.value)}
                   className="pl-10"
                   required
                 />
               </div>
+              {formData.username && !isUsernameValid && (
+                <div className="text-xs text-destructive">
+                  Username should be 3-16 characters and contain only letters, numbers, or underscores.
+                </div>
+              )}
             </div>
 
+            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -99,8 +149,14 @@ export default function Signup() {
                   required
                 />
               </div>
+              {formData.email && !isEmailValid && (
+                <div className="text-xs text-destructive">
+                  Please enter a valid email address.
+                </div>
+              )}
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -110,9 +166,7 @@ export default function Signup() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
                   value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("password", e.target.value)}
                   className="pl-10 pr-10"
                   required
                 />
@@ -130,9 +184,9 @@ export default function Signup() {
                   )}
                 </Button>
               </div>
-              {formData.password && (
-                <div className="text-xs text-muted-foreground">
-                  Password should be at least 8 characters long
+              {formData.password && !isPasswordValid && (
+                <div className="text-xs text-destructive">
+                  Password must be at least 8 characters, include a letter and a number.
                 </div>
               )}
             </div>
@@ -210,10 +264,16 @@ export default function Signup() {
               </Label>
             </div>
           </div>
+        {error && (
+          <div className="text-destructive mb-4 text-center text-sm">
+            {error}
+          </div>
+        )}
 
-          <Button type="submit" className="w-full" disabled={!canSubmit}>
-            Create account
+          <Button type="submit" className="w-full" disabled={!canSubmit || loading}>
+            {loading ? "Creating account..." : "Create account"}
           </Button>
+
         </form>
 
         <div className="mt-6">
