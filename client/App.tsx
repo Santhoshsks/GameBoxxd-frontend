@@ -12,6 +12,7 @@ import Lists from "./pages/Lists";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import CreateTierList from "./pages/CreateTierList";
+import { UserProvider } from "./contexts/UserContext";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,18 +20,20 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/games" element={<Games />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/lists" element={<Lists />} />
-        <Route path="/create-tier-list" element={<CreateTierList />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <UserProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/lists" element={<Lists />} />
+          <Route path="/create-tier-list" element={<CreateTierList />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </UserProvider>
     </BrowserRouter>
   </QueryClientProvider>
 );

@@ -7,17 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight, TrendingUp, Clock, Users } from "lucide-react";
 
 export default function Dashboard() {
-  // Sample data - in a real app this would come from an API
   const featuredGames = [
-    {
-      title: "The Last of Us Part II",
-      image:
-        "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300&h=400&fit=crop",
-      rating: 4.5,
-      views: "1.2k",
-      likes: "856",
-      year: "2020",
-    },
     {
       title: "God of War",
       image:
@@ -79,25 +69,6 @@ export default function Dashboard() {
   ];
 
   const reviews = [
-    {
-      user: {
-        name: "Alex Johnson",
-        username: "alexj",
-        avatar:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
-      },
-      game: {
-        title: "The Witcher 3",
-        year: "2015",
-        image:
-          "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=80&h=100&fit=crop",
-      },
-      rating: 5,
-      review:
-        "An absolute masterpiece. The storytelling, character development, and world-building are unmatched. Every side quest feels meaningful and the choices you make genuinely impact the narrative.",
-      likes: 147,
-      timeAgo: "2 hours ago",
-    },
     {
       user: {
         name: "Sarah Chen",
@@ -257,13 +228,6 @@ export default function Dashboard() {
             <section>
               <h3 className="text-lg font-semibold mb-4">Crew Picks</h3>
               <div className="grid grid-cols-2 gap-2">
-                <GameCard
-                  title="Elden Ring"
-                  image="https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=150&h=200&fit=crop"
-                  rating={4.9}
-                  year="2022"
-                  size="small"
-                />
                 <GameCard
                   title="God of War"
                   image="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=150&h=200&fit=crop"

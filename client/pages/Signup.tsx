@@ -52,13 +52,11 @@ const handleSubmit = async (e: React.FormEvent) => {
       
       await account.create(
         "unique()",                
-        formData.email,
+        formData.email.trim(),
         formData.password,
         formData.username
       );
-      
-      await account.createSession(formData.email, formData.password);
-      console.log("Logged");
+      await account.createEmailPasswordSession(formData.email.trim(), formData.password);
       navigate("/dashboard"); 
     } catch (err: any) {
       console.error("Signup error:", err);
