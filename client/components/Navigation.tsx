@@ -1,4 +1,4 @@
-import { Search, LogIn, LogOut } from "lucide-react";
+import { Search, LogIn, LogOut, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "./ThemeToggle";
@@ -37,16 +37,6 @@ export function Navigation() {
       // handle errors if any
     }
   };
-
-  if (loading) {
-    return (
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between px-4">
-          <div>Loading...</div>
-        </div>
-      </header>
-    );
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -125,7 +115,9 @@ export function Navigation() {
         {/* Right side - Actions */}
         <div className="flex items-center space-x-2 relative" ref={dropdownRef}>
           <ThemeToggle />
-          {user ? (
+          {loading ? (
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          ) : user ? (
             <>
               <Avatar
                 className="h-8 w-8 cursor-pointer"
@@ -140,23 +132,23 @@ export function Navigation() {
                 )}
               </Avatar>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-20">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    <LogOut className="inline-block mr-1" /> Sign out
-                  </button>
-                </div>
-              )}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-20">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  <LogOut className="inline-block mr-1" /> Sign out
+                </button>
+              </div>
+            )}
             </>
           ) : (
             <>
